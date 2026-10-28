@@ -1,0 +1,18 @@
+# binary and build output
+/ascii-browser
+/dist/
+
+# scratch dumps and previews (the curated ones live in examples/)
+ascii-*.txt
+out.txt
+*.pgm
+*.png
+*.log
+
+# editors and OS
+.DS_Store
+.idea/
+.vscode/
+
+# stray dumps in the project root (curated ones live in examples/)
+/*.txt
