@@ -1,32 +1,105 @@
-# ascii-browser
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/logo-dark.svg">
+    <img alt="ascii-browser" src="docs/logo.svg" width="340">
+  </picture>
+</p>
 
-A web browser for the terminal that renders real pages as pure ASCII:
-the 95 printable characters, one color, one character per cell. It drives
-a headless Chrome over the DevTools Protocol, forces the page onto an
-8x16 pixel grid, and maps every cell to a character by luminance, with the
-page text laid back on top as text. The dump is the point: a plain text
-file, one line per row, every line exactly as wide as the grid.
+<p align="center">
+  <b>The web in ninety-five characters.</b><br>
+  A terminal browser that draws real pages in printable ASCII, one colour, one character per cell.
+</p>
 
-The architecture follows Browsh: a real browser engine does the layout
-and the painting, and the terminal shows a text rendering of what it
-painted. Here the engine is Chrome, driven from Go through the DevTools
-Protocol, and the rendering is monochrome ASCII only.
+<p align="center">
+  <a href="#install">Install</a> ·
+  <a href="#use">Use</a> ·
+  <a href="#keys">Keys</a> ·
+  <a href="#flags">Flags</a> ·
+  <a href="#renderers">Renderers</a> ·
+  <a href="#known-limits">Known limits</a>
+</p>
 
-## Build and run
+```
+   The Mona Lisa[a] is a half-length portrait
+   painting by the Italian artist Leonardo da                          Mona Lisa
+   Vinci. Considered an archetypal masterpiece of         la Gioconda, Monna Lisa (Italian),
+   the Italian Renaissance,[1][2] it has been                     la Joconde (French)
+   described as "the best known, the most visited,     .--:-:-:--:---:--:--:--:--------:--:-:-.
+   the most written about, the most sung about,        :++=++++=+++++++++++++++=+=++=++++=++++:
+   [and] the most parodied work of art in the          :+========+=+===========+===+=+===+=+=+:
+   world".[3] The painting's novel qualities           :==============+*##%%%%#+============+=:
+   include the subject's enigmatic expression,[4]      :==----=--==-=+*+==+#%%%@#=======-=====:
+   the monumentality of the composition, the subtle    :=-=---------+#=:::-+*#%@%%===--=---===:
+   modelling of forms, and the atmospheric             -*+++====---=##==-=+++#%%@%#*+++=-=--=+:
+   illusionism.[5]                                     -#**+**#*+++*%#=+-*=+++%@%@##**#*=-==++:
+                                                       -#####*####%#%#===*--+#%@@%%%#***+++***-
+   The painting has been traditionally considered      -%########%#%%%*=+**+*%%%@@%%#%%#%####%-
+   to depict the Italian noblewoman Lisa del           -%%%##%#%####%%@#++*#%%%@%@%%########%%-
+   Giocondo.[6] It is painted in oil on a white        -%%%####****#%%@%@*%%##%%@%%%###%#%##%#-
+   poplar panel.[7] Leonardo never gave the            -%###*###%#%%@%%%#+=++=+#%%@%@%%##+*##%=
+   painting to the Giocondo family.[8] It was          -%###*##%%%%%%%*-:-:---+##%%@%%#++***#%-
+   believed to have been painted between 1503 and      -%#%#***##%%@#+-::::::-+####*##@%%*#***-
+   1506; however, Leonardo may have continued          -###*#***%@%%+--::::::-+*##%%%@%@%@%%##-
+   working on it as late as 1517. King Francis I of    -%#*#**%%@%%#%##**+++*#%%@%%%@%@@@%%%%%-
+   France acquired the Mona Lisa after Leonardo's      -@#####@%@%%%%%###%##%%@%%%%##%%%@@@%%@-
+   death in 1519, and it later became the property     -#****%%@%@%@%%@%%%%@@@%@%%%#%%@@%%@%%%-
+   of the French Republic. It has normally been on     -%%##%%%%%@%@%@%@%%@%@%@@@%%@@%@@@@%@%@-
+   display at the Louvre in Paris since 1797.[9]       -%%%@%%%%%%@%@%@%@%@%@@%@%@@%@%@%@%@%@%=
+                                                       =%@%%%%%%%@%@%@@%@@@@%@@%@@@%@%@@@@%@%@-
+   The painting's global fame and popularity partly    -@%@%#####*==++##%@%@@%@@%@%@%@%@%@@%@@-
+   stem from its 1911 theft by Vincenzo Peruggia,      -@%%%%#%%##+======+#%%@%@%%@%@@@%@@@@@@-
+   who attributed his actions to Italian patriotism    -@@@%@@%%%##**+++++**#*#####%%%@@@%@%@@-
+   -a belief it should belong to Italy. The theft      -@%@%@%@@**+=*#*****#%#%%%%%%@%@%@@@@%@-
+   and subsequent recovery in 1914 generated           -@%@%@%%%%#**#%%%%%%%%%@%@@@%@@@@@%@%@@-
+   unprecedented publicity for an art theft, and       -@%@%@%@%@%#@%%@%%%@%@@%@@%@@@%@%@@@@@@-
+   led to the publication of many cultural             -@%@%@%@%%@%@@%@@@@%@%@@%@@%@@@@@@%@%@@-
+```
 
-Needs Go 1.26 or newer, which the pinned chromedp requires, and Google Chrome or Chromium.
+<p align="center"><sub><code>ascii-browser --once --size 100x60 https://en.wikipedia.org/wiki/Mona_Lisa</code>, rows 18 to 50</sub></p>
+
+## What it is
+
+`ascii-browser` drives a headless Chrome over the DevTools Protocol,
+forces the page onto an 8x16 pixel grid and maps every cell to a
+character by luminance, with the page text laid back on top as text.
+Pictures become tone, text stays text, and videos play inside the page.
+The dump is the point: a plain text file, one line per row, every line
+exactly as wide as the grid, made only of the 95 printable characters
+from `0x20` to `0x7E`.
+
+The architecture follows [Browsh](https://www.brow.sh): a real browser
+engine does the layout and the painting, and the terminal shows a text
+rendering of what it painted. Here the engine is Chrome, driven from Go,
+and the rendering is monochrome ASCII only.
+
+## Install
+
+Needs Go 1.26 or newer, which the pinned chromedp requires, and Google
+Chrome or Chromium.
 
     go install github.com/eschero/ascii-browser/cmd/ascii-browser@latest
-    ascii-browser https://en.wikipedia.org
 
 or from a clone:
 
     go build -trimpath -ldflags="-s -w" -o ascii-browser ./cmd/ascii-browser
-    ./ascii-browser https://en.wikipedia.org
+
+## Use
+
+Browse:
+
+    ascii-browser https://en.wikipedia.org
 
 One frame to a file, at a chosen resolution:
 
-    ./ascii-browser --once --size 200x49 --dump page.txt https://en.wikipedia.org/wiki/Mona_Lisa
+    ascii-browser --once --size 200x49 --dump page.txt https://en.wikipedia.org/wiki/Mona_Lisa
+
+The page as an interface, with frames and widgets instead of tone:
+
+    ascii-browser --renderer ui https://en.wikipedia.org/wiki/Mona_Lisa
+
+A single picture, 800 columns wide, with its outlines drawn as lines:
+
+    ascii-browser --image photo.jpg --size 800x0 --structure --dump photo.txt
 
 ## Keys
 
@@ -53,7 +126,8 @@ fullscreen and mute, `j`, `l` and `c` go to the player as well.
 
 ## Flags
 
-Rendering:
+<details>
+<summary><b>Rendering</b></summary>
 
 | Flag | Meaning |
 |---|---|
@@ -71,7 +145,10 @@ Rendering:
 | `--no-halo` | no blank cell before and after text over dark or textured areas |
 | `--filler C` | character for runes with no ASCII transliteration (default `?`) |
 
-Renderers:
+</details>
+
+<details>
+<summary><b>Renderers and video</b></summary>
 
 | Flag | Meaning |
 |---|---|
@@ -83,7 +160,10 @@ Renderers:
 | `--audio on\|off` | play sound through the system output, and let videos start with their sound (default on in the interactive browser, off with `--once`) |
 | `--video-fps N` | cap on video frames per second; 0 (default) follows the video |
 
-Output and modes:
+</details>
+
+<details>
+<summary><b>Output and modes</b></summary>
 
 | Flag | Meaning |
 |---|---|
@@ -91,11 +171,16 @@ Output and modes:
 | `--full` | with `--once`: the dump is as tall as the page |
 | `--max-cells N` | with `--full`: cap on COLS*ROWS (default 4000000) |
 | `--image URL-or-path` | render one image on a white full-width page, like `--once --full` |
+| `--caption S` | with `--image`: text for a phone caption, `braille`, `ios` or `android` (see below) |
+| `--caption-width N` | with `--caption`: characters per line (default: what fits on one line of a phone) |
 | `--dump FILE` | file written by `--once` and `Ctrl+D` (stdout when empty) |
 | `--links` | with `--once`: list links and fields in Tab order on stderr |
 | `--buffer N` | interactive: frame buffer of N screens; scrolling inside it needs no capture (default 3) |
 
-Loading the page:
+</details>
+
+<details>
+<summary><b>Loading the page</b></summary>
 
 | Flag | Meaning |
 |---|---|
@@ -107,7 +192,10 @@ Loading the page:
 | `--strict-opacity` | treat an element at opacity 0 as hidden even while it is animating that opacity |
 | `--dom-text` | read text from the DOM even where the page paints nothing: opacity is ignored, display, visibility and clipping still apply |
 
-Chrome and diagnostics:
+</details>
+
+<details>
+<summary><b>Chrome and diagnostics</b></summary>
 
 | Flag | Meaning |
 |---|---|
@@ -117,37 +205,7 @@ Chrome and diagnostics:
 | `--timing` | timings to stderr |
 | `--log FILE` | append timings and notes to a file; interactive mode logs frames and inputs too |
 
-## Pictures for a caption
-
-    ./ascii-browser --image photo.jpg --caption braille > caption.txt
-
-A caption on a phone is set in a proportional system font, where ordinary
-ASCII art falls apart, and runs of spaces are dropped. `--caption braille`
-draws with braille patterns, 2x4 dots per character and the same width in
-every system font, the most faithful but not ASCII. `--caption ios` and
-`--caption android` stay plain ASCII, using only the characters that share
-one width in Apple's system font or in Roboto, light to dark, without the
-space, `#` or `@`: aligned, but with less tonal range, and only on that
-platform. The width defaults to what fits on one line of a phone, and the
-text is kept within Instagram's 2200 characters; `--caption-width` and
-`--invert` adjust it.
-
-## Examples
-
-Four dumps in `examples/`, produced by:
-
-    ./ascii-browser --once --size 200x49 --dump examples/example-com-200x49.txt https://example.com
-    ./ascii-browser --once --size 200x49 --dump examples/mona-lisa-200x49.txt https://en.wikipedia.org/wiki/Mona_Lisa
-    ./ascii-browser --once --size 200x49 --renderer ui --dump examples/mona-lisa-200x49-ui.txt https://en.wikipedia.org/wiki/Mona_Lisa
-    ./ascii-browser --image "https://upload.wikimedia.org/wikipedia/commons/e/e0/Creaci%C3%B3n_de_Ad%C3%A1n.jpg" --size 800x0 --structure --dump examples/creazione-di-adamo-800-structure.txt
-
-The two Mona Lisa dumps are the same screen through the two renderers:
-the tonal one maps every cell of the page to a character, the interface
-one draws frames and widgets and renders only the pictures tonally, inside
-their frames. The last one is 800 columns wide with `--structure`: the
-outlines of the two figures and of the arms read as lines, the modelling
-of the bodies stays tonal. Open the files in a monospace editor and zoom
-out.
+</details>
 
 ## Renderers
 
@@ -167,13 +225,44 @@ translucent one lets it show through.
 A playing video is rendered inside the page, once per decoded frame, and
 only its own cells are redrawn: a 1080p video plays at the speed it
 decodes, around 59 frames a second, with its sound in the interactive
-browser, without the rest of the page being read again, and whatever the page paints over the video, a caption, the
-menu, a panel, stays on top. Clicking a video plays or pauses it.
-
-    ./ascii-browser --renderer ui https://en.wikipedia.org/wiki/Mona_Lisa
+browser, without the rest of the page being read again, and whatever the
+page paints over the video, a caption, the menu, a panel, stays on top.
+Clicking a video plays or pauses it.
 
 Design notes, with the measurements behind each decision, are in
-`docs/design.md`.
+[`docs/design.md`](docs/design.md).
+
+## Pictures for a caption
+
+    ascii-browser --image photo.jpg --caption braille > caption.txt
+
+A caption on a phone is set in a proportional system font, where ordinary
+ASCII art falls apart, and runs of spaces are dropped. `--caption braille`
+draws with braille patterns, 2x4 dots per character and the same width in
+every system font, the most faithful but not ASCII. `--caption ios` and
+`--caption android` stay plain ASCII, using only the characters that share
+one width in Apple's system font or in Roboto, light to dark, without the
+space, `#` or `@`: aligned, but with less tonal range, and only on that
+platform. The width defaults to what fits on one line of a phone, and the
+text is kept within Instagram's 2200 characters; `--caption-width` and
+`--invert` adjust it.
+
+## Examples
+
+Four dumps in [`examples/`](examples), produced by:
+
+    ascii-browser --once --size 200x49 --dump examples/example-com-200x49.txt https://example.com
+    ascii-browser --once --size 200x49 --dump examples/mona-lisa-200x49.txt https://en.wikipedia.org/wiki/Mona_Lisa
+    ascii-browser --once --size 200x49 --renderer ui --dump examples/mona-lisa-200x49-ui.txt https://en.wikipedia.org/wiki/Mona_Lisa
+    ascii-browser --image "https://upload.wikimedia.org/wikipedia/commons/e/e0/Creaci%C3%B3n_de_Ad%C3%A1n.jpg" --size 800x0 --structure --dump examples/creazione-di-adamo-800-structure.txt
+
+The two Mona Lisa dumps are the same screen through the two renderers:
+the tonal one maps every cell of the page to a character, the interface
+one draws frames and widgets and renders only the pictures tonally, inside
+their frames. The last one is 800 columns wide with `--structure`: the
+outlines of the two figures and of the arms read as lines, the modelling
+of the bodies stays tonal. Open the files in a monospace editor and zoom
+out.
 
 ## Known limits
 
@@ -217,6 +306,12 @@ Design notes, with the measurements behind each decision, are in
   to one 8x16 cell: proportional text takes more room than in a normal
   browser, and pages built around exact pixel widths can wrap differently.
 
+## Credits
+
+The architecture follows [Browsh](https://www.brow.sh). The logo is a
+black disk rendered by `ascii-browser --image --size 12x0 --no-dither`,
+set in Go Mono Bold.
+
 ## License
 
-LGPL 2.1, see `LICENSE`.
+LGPL 2.1, see [`LICENSE`](LICENSE).
